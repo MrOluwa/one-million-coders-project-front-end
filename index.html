@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMS - E-Millennial Store</title>
+    <!-- Link to the stylesheet for page styles, this type of link is external -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Top navigation bar -->
+    <header class="topbar">
+        <div class="container topbar-inner">
+            <div class="logo-box">
+                <span>EMS</span>
+            </div>
+            <nav class="topnav">
+                <a href="#intro">Intro</a>
+                <a href="#about">About</a>
+                <a href="#shop">Shop</a>
+            </nav>
+            <div class="cart-box">
+                <span class="cart-icon">🛒</span>
+                <span class="cart-count">0</span>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero section with main heading and image -->
+        <section id="intro" class="hero-section">
+            <div class="container hero-inner">
+                <div class="hero-copy">
+                    <h1>THE<br>E-MILLENIAL<br>STORE</h1>
+
+                </div>
+                <div class="hero-image">
+                    <img src="heroImage.png" alt="Gadget showcase">
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 1.5rem;">
+                <a href="#shop" class="primary-btn">SHOP NOW</a>
+            </div>
+        </section>
+
+        <!-- About banner section -->
+        <section id="about" class="info-banner">
+            <div class="container info-inner">
+                <p>E-Millennial Store is an hypothetical online store for gadgets we believe every ‘Millenial’ or
+                    ‘Gen-Z’ should have today. We’ve got mobile phones, laptops, smartwatches and other gadgets.
+                    Explore all our gadgets and choose the ones that suit you.</p>
+            </div>
+        </section>
+
+        <!-- Products section -->
+        <section id="shop" class="products-section">
+            <div class="container">
+                <h2>OUR GADGETS</h2>
+                <div class="product-grid">
+                    <article class="product-card">
+                        <img src="product1.png" alt="Samsung TV">
+                        <span class="price-badge">₵899</span>
+                        <h3>SAMSUNG TV</h3>
+                        <button class="cart-btn" data-product-id="1">ADD TO CART</button>
+                    </article>
+                    <article class="product-card">
+                        <img src="product2.png" alt="Pixel 4a">
+                        <span class="price-badge">₵449</span>
+                        <h3>PIXEL 4A</h3>
+                        <button class="cart-btn" data-product-id="2">ADD TO CART</button>
+                    </article>
+                    <article class="product-card">
+                        <img src="product3.png" alt="PS 5">
+                        <span class="price-badge">₵499</span>
+                        <h3>PS 5</h3>
+                        <button class="cart-btn" data-product-id="3">ADD TO CART</button>
+                    </article>
+                    <article class="product-card">
+                        <img src="product4.png" alt="MacBook Air">
+                        <span class="price-badge">₵999</span>
+                        <h3>MACBOOK AIR</h3>
+                        <button class="cart-btn" data-product-id="4">ADD TO CART</button>
+                    </article>
+                    <article class="product-card">
+                        <img src="product5.png" alt="Apple Watch">
+                        <span class="price-badge">₵349</span>
+                        <h3>APPLE WATCH</h3>
+                        <button class="cart-btn" data-product-id="5">ADD TO CART</button>
+                    </article>
+                    <article class="product-card">
+                        <img src="product6.png" alt="AirPods">
+                        <span class="price-badge">₵199</span>
+                        <h3>AIR PODS</h3>
+                        <button class="cart-btn" data-product-id="6">ADD TO CART</button>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Cart modal overlay -->
+    <div class="cart-modal-overlay hidden" id="cartModalOverlay">
+        <div class="cart-modal">
+            <div class="cart-modal-header">
+                <div class="cart-modal-title">Your Cart</div>
+                <button class="close-modal" id="closeCartModal" type="button">×</button>
+            </div>
+            <div class="cart-modal-content">
+                <div class="cart-items-section">
+                    <table class="cart-table">
+                        <thead>
+                            <tr>
+                                <th>S/N</th>
+                                <th>Item</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cartItemsBody"></tbody>
+                    </table>
+                </div>
+                <div class="user-details-section">
+                    <input id="customerName" type="text" placeholder="Your Name">
+                    <input id="customerEmail" type="email" placeholder="Your Email">
+                    <input id="customerPhone" type="tel" placeholder="Your Phone Number">
+                </div>
+                <div class="total-section">
+                    <p>Total Amount to be Paid</p>
+                    <div class="total-amount" id="cartTotal">₵0</div>
+                </div>
+                <div class="cart-actions">
+                    <button id="continueBtn" class="secondary-btn" type="button">Continue Shopping</button>
+                    <button id="checkoutBtn" class="primary-btn" type="button">Pay Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout summary modal -->
+    <div class="summary-modal-overlay hidden" id="summaryModalOverlay">
+        <div class="summary-modal">
+            <div class="summary-icon">✔</div>
+            <h2>Thank You, <span id="summaryName">Customer</span>, Your Order Has been Received</h2>
+            <div class="summary-table">
+                <div class="summary-row summary-header">
+                    <span>S/N</span>
+                    <span>Item</span>
+                    <span>Quantity</span>
+                </div>
+                <div id="summaryRows"></div>
+            </div>
+            <p class="summary-note" id="summaryNote"></p>
+            <button id="summaryOkBtn" class="primary-btn" type="button">Ok</button>
+        </div>
+    </div>
+
+    <!-- Footer section -->
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <div class="footer-logo">EMS</div>
+            <p>Designed and Crafted by ONILIMO LAZARUS WUNIBOKALA</p>
+        </div>
+    </footer>
+
+    <!-- Paystack inline payment script -->
+    <script src="https://js.paystack.co/v2/inline.js">
+    </script>
+    <!-- Script for the page functionality -->
+    <script src="main.js"></script>
+
+</body>
+
+</html>
