@@ -1,0 +1,36 @@
+{
+  "filePath": "index.html",
+  "lines": [
+    {
+      "line": 163,
+      "author": "human",
+      "confidence": 0.34533333333333327,
+      "aiEdits": 0,
+      "humanEdits": 19,
+      "lastEditType": "human",
+      "lastEditTimestamp": 1780665712856,
+      "signals": {
+        "typingRhythm": 0.3,
+        "editSize": 0.15000000000000002,
+        "cursorMovement": 0.3,
+        "editSequence": 0.8300000000000001,
+        "undoFrequency": 0.5,
+        "extensionSource": 0.5,
+        "velocityProfile": 0.5,
+        "selectionPattern": 0.5,
+        "pastePattern": 0.2,
+        "deletionPattern": 0.5,
+        "pausePattern": 0.5
+      }
+    }
+  ],
+  "summary": {
+    "totalLines": 1,
+    "aiLines": 0,
+    "humanLines": 1,
+    "mixedLines": 0,
+    "aiPercentage": 0,
+    "humanPercentage": 100
+  },
+  "lastUpdated": 1780665716519
+}
