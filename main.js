@@ -17,79 +17,93 @@ var cartTotal = document.getElementById('cartTotal');
 var continueBtn = document.getElementById('continueBtn');
 var checkoutBtn = document.getElementById('checkoutBtn');
 var closeCartModal = document.getElementById('closeCartModal');
+
 var summaryModalOverlay = document.getElementById('summaryModalOverlay');
 var summaryOkBtn = document.getElementById('summaryOkBtn');
 var summaryName = document.getElementById('summaryName');
 var summaryRows = document.getElementById('summaryRows');
+var summaryNote = document.getElementById('summaryNote');
+
 var customerNameInput = document.getElementById('customerName');
 var customerEmailInput = document.getElementById('customerEmail');
 var customerPhoneInput = document.getElementById('customerPhone');
-var summaryNote = document.getElementById('summaryNote');
 
-var paystackPublicKey = 'pk_test_1e391a796f7c1e19eae9431fe3222a5839fe1e1f';
+var paystackPublicKey =
+    'pk_test_1e391a796f7c1e19eae9431fe3222a5839fe1e1f';
 
-// convert number to text with the Ghana cedi symbol
+
+// FORMAT CURRENCY
 function formatCurrency(amount) {
+
     return '₵' + amount.toLocaleString();
+
 }
 
-// update the number that shows how many items are in the cart
+// UPDATE CART COUNT
 function updateCartCount() {
-    var count = 0;
-    var keys = Object.keys(cart);
-    for (var i = 0; i < keys.length; i++) {
-        var id = keys[i];
-        count = count + cart[id].quantity;
-    }
+
+    // Count only products
+    var count = Object.keys(cart).length;
+
     cartCount.textContent = count;
 }
 
-// change all product buttons to show add or remove
+// UPDATE BUTTON STATES
 function updateProductButtons() {
+
     var buttons = document.querySelectorAll('.cart-btn');
     for (var i = 0; i < buttons.length; i++) {
+
         var button = buttons[i];
+
         var id = button.getAttribute('data-product-id');
         if (cart[id]) {
             button.textContent = 'REMOVE FROM CART';
             button.classList.add('remove-state');
         } else {
+
             button.textContent = 'ADD TO CART';
             button.classList.remove('remove-state');
         }
     }
 }
 
-// show the cart popup
+// OPEN CART
 function openCartModal() {
     cartModalOverlay.classList.remove('hidden');
 }
 
-// hide the cart popup
+// CLOSE CART
 function closeCartModalWindow() {
     cartModalOverlay.classList.add('hidden');
 }
 
-// show the order summary popup
+// OPEN SUMMARY
 function openSummaryModal() {
     summaryModalOverlay.classList.remove('hidden');
 }
 
-// hide the order summary popup
+// CLOSE SUMMARY
 function closeSummaryModal() {
     summaryModalOverlay.classList.add('hidden');
 }
 
-// draw the cart rows inside the cart table
+// RENDER CART
 function renderCart() {
     cartItemsBody.innerHTML = '';
     var keys = Object.keys(cart);
     var totalPrice = 0;
-
     if (keys.length === 0) {
-        cartItemsBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:1.5rem 0; color:#6c6c6c;">Your cart is empty</td></tr>';
+        cartItemsBody.innerHTML =
+            '<tr>' +
+            '<td colspan="5" style="text-align:center; padding:1.5rem 0; color:#6c6c6c;">' +
+            'Your cart is empty' +
+            '</td>' +
+            '</tr>';
+
         cartTotal.textContent = formatCurrency(0);
         return;
+
     }
 
     for (var i = 0; i < keys.length; i++) {
@@ -107,54 +121,105 @@ function renderCart() {
             '<button data-action="increase" data-id="' + item.id + '">+</button>' +
             '</div>' +
             '</td>' +
-            '<td><button class="remove-btn" data-action="remove" data-id="' + item.id + '">Remove</button></td>';
+            '<td>' +
+            '<button class="remove-btn" data-action="remove" data-id="' + item.id + '">' +
+            'Remove' +
+            '</button>' +
+            '</td>';
+
         cartItemsBody.appendChild(row);
-        totalPrice = totalPrice + item.price * item.quantity;
+
+        totalPrice =
+            totalPrice + (item.price * item.quantity);
     }
 
-    cartTotal.textContent = formatCurrency(totalPrice);
+    cartTotal.textContent =
+        formatCurrency(totalPrice);
 }
 
-// calculate the cart total amount in ghana cedis
+// GET TOTAL AMOUNT
 function getCartTotalAmount() {
     var keys = Object.keys(cart);
     var total = 0;
     for (var i = 0; i < keys.length; i++) {
         var item = cart[keys[i]];
-        total = total + item.price * item.quantity;
+        total =
+            total + (item.price * item.quantity);
+
     }
     return total;
 }
 
-// start Paystack payment popup and handle success
+// START PAYMENT
 function startPaystackPayment() {
-    var customerName = customerNameInput.value.trim();
-    var customerEmail = customerEmailInput.value.trim();
-    var totalAmount = getCartTotalAmount();
+    var customerName =
+        customerNameInput.value.trim();
+    var customerEmail =
+        customerEmailInput.value.trim();
+    var customerPhone =
+        customerPhoneInput.value.trim();
+    var totalAmount =
+        getCartTotalAmount();
 
+    // NAME VALIDATION
     if (customerName === '') {
+
         alert('Please enter your name before payment.');
         return;
     }
+
+    // EMAIL VALIDATION
     if (customerEmail === '') {
         alert('Please enter your email before payment.');
         return;
     }
+
+    // PHONE EMPTY
+    if (customerPhone === '') {
+        alert('Please enter your number before payment.');
+        return;
+    }
+
+    // PHONE STARTS WITH 233
+    if (!customerPhone.startsWith('233')) {
+        alert('Phone number must start with 233');
+        return;
+    }
+
+    // PHONE LENGTH
+    if (customerPhone.length !== 12) {
+        alert('Phone number must be exactly 12 digits');
+        return;
+    }
+
+    // ONLY NUMBERS
+    if (isNaN(customerPhone)) {
+        alert('Phone number must contain only numbers');
+        return;
+    }
+
+    // EMPTY CART
     if (totalAmount === 0) {
         alert('Your cart is empty. Add items before payment.');
         return;
+
     }
+
+    // PAYSTACK CHECK
     if (typeof PaystackPop === 'undefined') {
         alert('Paystack is not loaded. Refresh the page and try again.');
         return;
     }
 
+    // START PAYSTACK
     var handler = PaystackPop.setup({
         key: paystackPublicKey,
         email: customerEmail,
         amount: totalAmount * 100,
         currency: 'GHS',
-        ref: 'EMS' + Math.floor((Math.random() * 1000000000) + 1),
+        ref:
+            'EMS' +
+            Math.floor((Math.random() * 1000000000) + 1),
         metadata: {
             custom_fields: [
                 {
@@ -162,29 +227,46 @@ function startPaystackPayment() {
                     variable_name: 'customer_name',
                     value: customerName
                 },
+
                 {
                     display_name: 'Phone Number',
                     variable_name: 'customer_phone',
-                    value: customerPhoneInput.value.trim()
+                    value: customerPhone
                 }
             ]
         },
+
         callback: function (response) {
-            summaryNote.textContent = 'Payment successful! Transaction ref: ' + response.reference;
+
+            // PAYMENT SUCCESS
+            summaryNote.textContent =
+                'Payment successful! Transaction ref: ' +
+                response.reference;
+
+            // SHOW SUMMARY
             renderSummary();
+
+            // CLOSE CART
             closeCartModalWindow();
+
+            // OPEN SUMMARY
             openSummaryModal();
         },
+
         onClose: function () {
-            alert('Payment window was closed. You can try again when ready.');
+            alert(
+                'Payment window was closed. You can try again when ready.'
+            );
         }
     });
+
     handler.openIframe();
 }
 
-// add item to cart or remove it if it is already there
+// ADD OR REMOVE PRODUCT
 function toggleProductInCart(productId) {
     var found = null;
+
     for (var i = 0; i < products.length; i++) {
         if (products[i].id === productId) {
             found = products[i];
@@ -199,6 +281,7 @@ function toggleProductInCart(productId) {
     if (cart[productId]) {
         delete cart[productId];
     } else {
+
         cart[productId] = {
             id: found.id,
             name: found.name,
@@ -212,39 +295,48 @@ function toggleProductInCart(productId) {
     renderCart();
 }
 
-// change quantity for one cart item
+// CHANGE QUANTITY
 function changeQuantity(productId, change) {
     if (!cart[productId]) {
         return;
     }
-    var newQuantity = cart[productId].quantity + change;
+
+    var newQuantity =
+        cart[productId].quantity + change;
+
     if (newQuantity < 1) {
         newQuantity = 1;
     }
-    cart[productId].quantity = newQuantity;
+
+    cart[productId].quantity =
+        newQuantity;
     renderCart();
     updateCartCount();
 }
 
-// remove one item from the cart completely
+// REMOVE PRODUCT
 function removeProduct(productId) {
     if (!cart[productId]) {
         return;
     }
+
     delete cart[productId];
     updateCartCount();
     updateProductButtons();
     renderCart();
 }
 
-// show the customer name and items in the summary popup
+// RENDER SUMMARY
 function renderSummary() {
     summaryRows.innerHTML = '';
-    var customerName = customerNameInput.value.trim();
+    var customerName =
+        customerNameInput.value.trim();
     if (customerName === '') {
         customerName = 'Customer';
     }
-    summaryName.textContent = customerName;
+
+    summaryName.textContent =
+        customerName;
 
     var keys = Object.keys(cart);
     for (var i = 0; i < keys.length; i++) {
@@ -260,74 +352,102 @@ function renderSummary() {
     }
 }
 
-// empty the cart after checkout
+// CLEAR CART
 function clearCart() {
-    var keys = Object.keys(cart);
-    for (var i = 0; i < keys.length; i++) {
-        delete cart[keys[i]];
-    }
+    cart = {};
     updateCartCount();
     renderCart();
     updateProductButtons();
 }
 
+// INITIALIZE
 function init() {
-    var buttons = document.querySelectorAll('.cart-btn');
+    var buttons =
+        document.querySelectorAll('.cart-btn');
     for (var i = 0; i < buttons.length; i++) {
-        buttons[i].addEventListener('click', function () {
-            var id = this.getAttribute('data-product-id');
-            toggleProductInCart(id);
-        });
+        buttons[i].addEventListener(
+            'click',
+            function () {
+                var id =
+                    this.getAttribute('data-product-id');
+                toggleProductInCart(id);
+            }
+        );
     }
 
+    // OPEN CART
     cartIcon.addEventListener('click', function () {
         renderCart();
         openCartModal();
     });
 
-    closeCartModal.addEventListener('click', closeCartModalWindow);
-    continueBtn.addEventListener('click', closeCartModalWindow);
 
+    // CLOSE CART
+    closeCartModal.addEventListener(
+        'click',
+        closeCartModalWindow
+    );
+    continueBtn.addEventListener(
+        'click',
+        closeCartModalWindow
+    );
+
+    // CHECKOUT
     checkoutBtn.addEventListener('click', function () {
         startPaystackPayment();
     });
 
+    // SUMMARY OK BUTTON
     summaryOkBtn.addEventListener('click', function () {
+        // CLOSE SUMMARY
         closeSummaryModal();
+        // CLEAR CART
         clearCart();
+        // REFRESH WEBSITE
+        location.reload();
     });
 
+    // CART ACTIONS
     cartItemsBody.addEventListener('click', function (event) {
-        var action = event.target.getAttribute('data-action');
-        var id = event.target.getAttribute('data-id');
+        var action =
+            event.target.getAttribute('data-action');
+        var id =
+            event.target.getAttribute('data-id');
         if (!action || !id) {
             return;
         }
+
         if (action === 'increase') {
             changeQuantity(id, 1);
         }
+
         if (action === 'decrease') {
             changeQuantity(id, -1);
         }
+
         if (action === 'remove') {
             removeProduct(id);
         }
     });
 
+    // CLOSE CART OVERLAY
     cartModalOverlay.addEventListener('click', function (event) {
         if (event.target === cartModalOverlay) {
             closeCartModalWindow();
         }
     });
 
+    // CLOSE SUMMARY OVERLAY
     summaryModalOverlay.addEventListener('click', function (event) {
         if (event.target === summaryModalOverlay) {
             closeSummaryModal();
         }
     });
 
+    // INITIAL UPDATE
     updateCartCount();
     updateProductButtons();
 }
 
+// START APP
 init();
